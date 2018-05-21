@@ -1,0 +1,24 @@
+* {
+    font-family: 'Concert One', cursive;
+    margin: 0px;
+    padding: 0px;
+}
+
+#content {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#title {
+    font-size: 60px;
+}
+
+#new-btn {
+    margin: 50px;
+    padding: 10px;
+    font-size: 25px;
+}
