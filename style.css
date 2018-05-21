@@ -5,12 +5,13 @@
 }
 
 #content {
-    height: 500px;
+    height: 700px;
     display: flex;
     flex-direction: column;
     align-content: center;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 #title {
@@ -21,4 +22,15 @@
     margin: 50px;
     padding: 10px;
     font-size: 25px;
+}
+
+.board-space {
+    border: 1px solid black;
+    height: 125px;
+    width: 87px;
+    margin: 5px 30px;
+}
+
+.board-space img {
+    width: 100%;
 }
