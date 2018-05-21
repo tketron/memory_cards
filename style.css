@@ -29,8 +29,15 @@
     height: 125px;
     width: 87px;
     margin: 5px 30px;
+    display: flex;
 }
 
 .board-space img {
     width: 100%;
+}
+
+.counter-div {
+    width: 100%;
+    border: 2px solid red;
+    display: flex;
 }
