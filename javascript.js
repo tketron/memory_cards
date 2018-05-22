@@ -24,6 +24,7 @@ const cardImages = [
   './lib/card-12.jpg',
   './lib/card-12.jpg'
 ];
+const cardBackImagePath = './lib/card-back.jpg';
 const ids = [
   1,
   2,
@@ -74,7 +75,7 @@ function incrementGuessCount() {
 function cardClickHandler(gameObject) {
   if (firstClick) {
     // console.log('first');
-    // console.log(event.currentTarget);
+    console.log(event.currentTarget);
     firstGuess = gameObject[event.currentTarget.id];
     //check if valid click
     if (firstGuess.status === 'unflipped') {
@@ -97,8 +98,10 @@ function cardClickHandler(gameObject) {
 
     //store id
   } else {
+    console.log(event.currentTarget);
     //check if valid click, unflipped and not firstGuess
     secondGuess = gameObject[event.currentTarget.id];
+    console.log(secondGuess);
     //check if valid click
     if (secondGuess.status === 'unflipped' && firstGuess !== secondGuess) {
       //   console.log('unmatched');
@@ -152,8 +155,8 @@ function cardClickHandler(gameObject) {
   if (numberOfMatches === 12) {
     prompt('You Win!!');
   }
-  console.log(firstGuess);
-  console.log(secondGuess);
+  //   console.log(firstGuess);
+  //   console.log(secondGuess);
 }
 
 function constructGameObject() {
@@ -192,16 +195,35 @@ function setupGameGrid() {
     newSpace.setAttribute('id', i);
 
     if (gameObject[i].type === 'card') {
-      newSpace.addEventListener('click', function() {
-        cardClickHandler(gameObject);
-      });
+      newSpace.addEventListener(
+        'click',
+        function() {
+          cardClickHandler(gameObject);
+        },
+        false
+      );
       let cardDiv = document.createElement('div');
       cardDiv.classList.add('card-div');
       cardDiv.classList.add('unflipped');
-      let cardImage = document.createElement('img');
-      cardImage.setAttribute('src', gameObject[i].card_front);
 
-      cardDiv.appendChild(cardImage);
+      //add card front div
+      let cardFrontDiv = document.createElement('div');
+      cardFrontDiv.classList.add('card-face');
+      cardFrontDiv.classList.add('card-front');
+      let cardFrontImage = document.createElement('img');
+      cardFrontImage.setAttribute('src', gameObject[i].card_front);
+      cardFrontDiv.appendChild(cardFrontImage);
+
+      //add card back div on top of card front div
+      let cardBackDiv = document.createElement('div');
+      cardBackDiv.classList.add('card-face');
+      cardBackDiv.classList.add('card-back');
+      let cardBackImage = document.createElement('img');
+      cardBackImage.setAttribute('src', cardBackImagePath);
+      cardBackDiv.appendChild(cardBackImage);
+
+      cardDiv.appendChild(cardBackDiv);
+      cardDiv.appendChild(cardFrontDiv);
       newSpace.appendChild(cardDiv);
     } else {
       let counterDiv = document.createElement('div');

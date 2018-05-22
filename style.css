@@ -2,6 +2,7 @@
   font-family: 'Concert One', cursive;
   margin: 0px;
   padding: 0px;
+  sizing: border-box;
 }
 
 #content {
@@ -29,27 +30,60 @@
   height: 125px;
   width: 87px;
   margin: 5px 30px;
-  display: flex;
+  z-index: 10;
+  /* display: flex; */
 }
 
-.card-space {
+/* .board-space img {
   width: 100%;
-}
-
-.board-space img {
-  width: 100%;
-}
+} */
 
 .counter-div {
   width: 100%;
+  height: 100%;
   border: 2px solid red;
   display: flex;
 }
 
+.card-div {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  /* border: 1px solid blue; */
+  display: inline-block;
+}
+
+.card-face {
+  width: 100%;
+  height: 100%;
+  /* display: inline-block; */
+  position: absolute;
+}
+
+.card-face img {
+  /* display: inline-block; */
+  height: 125px;
+  width: 87px;
+}
+
+.card-back {
+  z-index: 2;
+}
+
+.card-front {
+  /* position: relative;
+  top: -127px; */
+  z-index: 1;
+}
+
 .unflipped {
-  border: 1px solid green;
+  /* border: 1px solid green; */
 }
 
 .flipped {
-  border: 1px solid red;
+  /* border: 1px solid red; */
+}
+
+div.flipped > .card-back {
+  display: none;
 }
