@@ -85,5 +85,20 @@
 }
 
 div.flipped > .card-back {
-  display: none;
+  /* display: none; */
+  /* visibility: hidden; */
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.5s;
+}
+
+div.unflipped > .card-back {
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 0.3;
+}
+
+.card-back {
+  transition-property: opacity;
+  transition-duration: 1s;
 }

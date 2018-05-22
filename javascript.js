@@ -81,7 +81,7 @@ function cardClickHandler(gameObject) {
     if (firstGuess.status === 'unflipped') {
       //   console.log('unmatched');
       //   console.log(event.currentTarget.children[0]);
-      //   event.currentTarget.children[0].classList.remove('unflipped');
+      event.currentTarget.children[0].classList.remove('unflipped');
       event.currentTarget.children[0].classList.add('flipped');
       firstGuess.status = 'flipped';
       firstClick = false;
@@ -106,7 +106,7 @@ function cardClickHandler(gameObject) {
     if (secondGuess.status === 'unflipped' && firstGuess !== secondGuess) {
       //   console.log('unmatched');
       //   console.log(event.currentTarget.children[0]);
-      //   event.currentTarget.children[0].classList.remove('unflipped');
+      event.currentTarget.children[0].classList.remove('unflipped');
       event.currentTarget.children[0].classList.add('flipped');
       secondGuess.status = 'flipped';
       firstClick = false;
@@ -136,20 +136,31 @@ function cardClickHandler(gameObject) {
     } else {
       //not a match
       console.log(document.getElementById(firstGuess.id).children[0]);
-      document
-        .getElementById(firstGuess.id)
-        .children[0].classList.remove('flipped');
-      document
-        .getElementById(secondGuess.id)
-        .children[0].classList.remove('flipped');
-      //edit gameObject entries
-      gameObject[firstGuess.id].status = 'unflipped';
-      gameObject[secondGuess.id].status = 'unflipped';
+      setTimeout(function() {
+        document
+          .getElementById(firstGuess.id)
+          .children[0].classList.add('unflipped');
+        document
+          .getElementById(secondGuess.id)
+          .children[0].classList.add('unflipped');
+        document
+          .getElementById(firstGuess.id)
+          .children[0].classList.remove('flipped');
 
-      //first guess back to true
-      firstClick = true;
-      firstGuess = null;
-      secondGuess = null;
+        document
+          .getElementById(secondGuess.id)
+          .children[0].classList.remove('flipped');
+
+        gameObject[firstGuess.id].status = 'unflipped';
+        gameObject[secondGuess.id].status = 'unflipped';
+
+        //first guess back to true
+        firstClick = true;
+        firstGuess = null;
+        secondGuess = null;
+      }, 1000);
+
+      //edit gameObject entries
     }
   }
   if (numberOfMatches === 12) {
