@@ -55,7 +55,8 @@ const ids = [
 
 let firstClick = true;
 let firstGuess, secondGuess;
-let numberOfMatches = 0;
+let numberOfMatches = 11;
+let gameObject;
 
 function buildCardSpace() {}
 
@@ -72,12 +73,10 @@ function incrementGuessCount() {
   document.getElementById('counter').innerText = +oldGuessNumber + 1;
 }
 
-function cardClickHandler(gameObject) {
+function cardClickHandler() {
   if (firstClick) {
     // console.log('first');
-    console.log(event.currentTarget);
     firstGuess = gameObject[event.currentTarget.id];
-    //check if valid click
     if (firstGuess.status === 'unflipped') {
       //   console.log('unmatched');
       //   console.log(event.currentTarget.children[0]);
@@ -93,19 +92,11 @@ function cardClickHandler(gameObject) {
       firstGuess = null;
       alert('Invalid guess, try again!');
     }
-
-    //flip card
-
-    //store id
   } else {
-    console.log(event.currentTarget);
     //check if valid click, unflipped and not firstGuess
     secondGuess = gameObject[event.currentTarget.id];
-    console.log(secondGuess);
     //check if valid click
     if (secondGuess.status === 'unflipped' && firstGuess !== secondGuess) {
-      //   console.log('unmatched');
-      //   console.log(event.currentTarget.children[0]);
       event.currentTarget.children[0].classList.remove('unflipped');
       event.currentTarget.children[0].classList.add('flipped');
       secondGuess.status = 'flipped';
@@ -121,12 +112,13 @@ function cardClickHandler(gameObject) {
     }
     //check if match with id 1
     if (firstGuess.match_id === secondGuess.id) {
-      //   alert(`IT'S A MATCH!!!`);
       //keep classes
 
       //edit gameObject entries
       gameObject[firstGuess.id].status = 'matched';
       gameObject[secondGuess.id].status = 'matched';
+      removeCardListener(firstGuess.id);
+      removeCardListener(secondGuess.id);
 
       //first guess back to true
       firstClick = true;
@@ -134,46 +126,75 @@ function cardClickHandler(gameObject) {
       secondGuess = null;
       numberOfMatches += 1;
     } else {
-      //not a match
-      console.log(document.getElementById(firstGuess.id).children[0]);
+      let firstID = firstGuess.id;
+      let secondID = secondGuess.id;
       setTimeout(function() {
+        document.getElementById(firstID).children[0].classList.add('unflipped');
+        document.getElementById(firstID).children[0].classList.add('unflipped');
+        document.getElementById(secondID).children[0].classList.add('matched');
+        document.getElementById(secondID).children[0].classList.add('matched');
         document
-          .getElementById(firstGuess.id)
-          .children[0].classList.add('unflipped');
-        document
-          .getElementById(secondGuess.id)
-          .children[0].classList.add('unflipped');
-        document
-          .getElementById(firstGuess.id)
+          .getElementById(firstID)
           .children[0].classList.remove('flipped');
-
         document
-          .getElementById(secondGuess.id)
+          .getElementById(secondID)
           .children[0].classList.remove('flipped');
-
-        gameObject[firstGuess.id].status = 'unflipped';
-        gameObject[secondGuess.id].status = 'unflipped';
-
-        //first guess back to true
-        firstClick = true;
-        firstGuess = null;
-        secondGuess = null;
       }, 1000);
 
-      //edit gameObject entries
+      gameObject[firstGuess.id].status = 'unflipped';
+      gameObject[secondGuess.id].status = 'unflipped';
+
+      firstClick = true;
+      firstGuess = null;
+      secondGuess = null;
     }
   }
   if (numberOfMatches === 12) {
-    prompt('You Win!!');
+    removeAllCardListeners();
+    appendWinDiv();
   }
-  //   console.log(firstGuess);
-  //   console.log(secondGuess);
+}
+
+function appendWinDiv() {
+  let winDiv = document.createElement('div');
+  winDiv.setAttribute('id', 'win-div');
+
+  let winHeader = document.createElement('h1');
+  winHeader.innerText = 'You Win!';
+
+  let playAgainBtn = document.createElement('btn');
+  playAgainBtn.setAttribute('id', 'play-again-btn');
+  playAgainBtn.innerText = 'Play Again?';
+
+  winDiv.appendChild(winHeader);
+  winDiv.appendChild(playAgainBtn);
+
+  let container = document.querySelector('body');
+  container.appendChild(winDiv);
+
+  //   let container = document.getElementById('content');
+  //   container.parentNode.insertBefore(winDiv, container.nextSibling);
+  //   container.appendChild(winDiv);
+
+  addNewBtnListener('play-again-btn');
+}
+
+function removeCardListener(divID) {
+  let targetDiv = document.getElementById(divID);
+  console.log(targetDiv);
+  targetDiv.removeEventListener('click', cardClickHandler);
+}
+
+function removeAllCardListeners() {
+  let cardDivs = document.querySelectorAll('.board-space');
+  for (let i = 0; i < cardDivs.length; i++) {
+    cardDivs[i].removeEventListener('click', cardClickHandler);
+  }
 }
 
 function constructGameObject() {
   let randomizedIds = randomizeArray(ids);
-  //   console.log(randomizedIds);
-  let gameObject = {};
+  gameObject = {};
   gameObject[randomizedIds[0]] = {
     type: 'counter'
   };
@@ -192,13 +213,12 @@ function constructGameObject() {
     }
   }
   console.log(gameObject);
-  return gameObject;
 }
 
 function setupGameGrid() {
   let container = document.getElementById('content');
 
-  const gameObject = constructGameObject();
+  //   const gameObject = constructGameObject();
 
   for (let i = 1; i <= 25; i++) {
     let newSpace = document.createElement('div');
@@ -206,13 +226,14 @@ function setupGameGrid() {
     newSpace.setAttribute('id', i);
 
     if (gameObject[i].type === 'card') {
-      newSpace.addEventListener(
-        'click',
-        function() {
-          cardClickHandler(gameObject);
-        },
-        false
-      );
+      //   newSpace.addEventListener(
+      //     'click',
+      //     function() {
+      //       cardClickHandler(gameObject);
+      //     },
+      //     true
+      //   );
+
       let cardDiv = document.createElement('div');
       cardDiv.classList.add('card-div');
       cardDiv.classList.add('unflipped');
@@ -236,6 +257,8 @@ function setupGameGrid() {
       cardDiv.appendChild(cardBackDiv);
       cardDiv.appendChild(cardFrontDiv);
       newSpace.appendChild(cardDiv);
+
+      newSpace.addEventListener('click', cardClickHandler);
     } else {
       let counterDiv = document.createElement('div');
       counterDiv.classList.add('counter-div');
@@ -248,10 +271,6 @@ function setupGameGrid() {
       newSpace.appendChild(counterDiv);
     }
 
-    // let id_text = document.createElement('p');
-    // id_text.innerHTML = i;
-    // newSpace.appendChild(id_text);
-
     container.appendChild(newSpace);
   }
 }
@@ -263,16 +282,18 @@ function clearChildNodes(container) {
 }
 
 function startNewGame() {
+  constructGameObject();
+  numberOfMatches = 0;
+  let winDiv = document.getElementById('win-div');
+  if (winDiv) document.querySelector('body').removeChild(winDiv);
   clearChildNodes(document.getElementById('content'));
   setupGameGrid();
 }
 
-function addBtnListener() {
-  document.getElementById('new-btn').addEventListener('click', function() {
-    startNewGame();
-  });
+function addNewBtnListener(btnID) {
+  document.getElementById(btnID).addEventListener('click', startNewGame);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  addBtnListener();
+  addNewBtnListener('new-btn');
 });
