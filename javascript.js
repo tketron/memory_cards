@@ -160,21 +160,17 @@ function appendWinDiv() {
   winDiv.setAttribute('id', 'win-div');
 
   let winHeader = document.createElement('h1');
-  winHeader.innerText = 'You Win!';
+  winHeader.innerText = 'YOU WIN!';
 
   let playAgainBtn = document.createElement('btn');
   playAgainBtn.setAttribute('id', 'play-again-btn');
-  playAgainBtn.innerText = 'Play Again?';
+  playAgainBtn.innerText = 'PLAY AGAIN?';
 
   winDiv.appendChild(winHeader);
   winDiv.appendChild(playAgainBtn);
 
   let container = document.querySelector('body');
   container.appendChild(winDiv);
-
-  //   let container = document.getElementById('content');
-  //   container.parentNode.insertBefore(winDiv, container.nextSibling);
-  //   container.appendChild(winDiv);
 
   addNewBtnListener('play-again-btn');
 }
@@ -226,14 +222,6 @@ function setupGameGrid() {
     newSpace.setAttribute('id', i);
 
     if (gameObject[i].type === 'card') {
-      //   newSpace.addEventListener(
-      //     'click',
-      //     function() {
-      //       cardClickHandler(gameObject);
-      //     },
-      //     true
-      //   );
-
       let cardDiv = document.createElement('div');
       cardDiv.classList.add('card-div');
       cardDiv.classList.add('unflipped');
@@ -284,9 +272,11 @@ function clearChildNodes(container) {
 function startNewGame() {
   constructGameObject();
   numberOfMatches = 0;
+
   let winDiv = document.getElementById('win-div');
   if (winDiv) document.querySelector('body').removeChild(winDiv);
   clearChildNodes(document.getElementById('content'));
+
   setupGameGrid();
 }
 
