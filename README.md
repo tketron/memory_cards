@@ -1,3 +1,5 @@
-# memory_cards
+# Magic Memory
 
-By Tyler Ketron.
+Match the Magical pairs in the fewest guesses possible to win the game!
+
+[Play here!](https://tketron.github.io/memory_cards/)
