@@ -55,12 +55,8 @@ const ids = [
 
 let firstClick = true;
 let firstGuess, secondGuess;
-let numberOfMatches = 11;
+let numberOfMatches = 0;
 let gameObject;
-
-function buildCardSpace() {}
-
-function buildCounterSpace() {}
 
 function randomizeArray(arr) {
   return arr.sort(function() {
@@ -73,15 +69,21 @@ function incrementGuessCount() {
   document.getElementById('counter').innerText = +oldGuessNumber + 1;
 }
 
+function toggleFlippedClasses(element) {
+  if (element.classList.contains('unflipped')) {
+    element.classList.remove('unflipped');
+    element.classList.add('flipped');
+  } else {
+    element.classList.remove('flipped');
+    element.classList.add('unflipped');
+  }
+}
+
 function cardClickHandler() {
   if (firstClick) {
-    // console.log('first');
     firstGuess = gameObject[event.currentTarget.id];
     if (firstGuess.status === 'unflipped') {
-      //   console.log('unmatched');
-      //   console.log(event.currentTarget.children[0]);
-      event.currentTarget.children[0].classList.remove('unflipped');
-      event.currentTarget.children[0].classList.add('flipped');
+      toggleFlippedClasses(event.currentTarget.children[0]);
       firstGuess.status = 'flipped';
       firstClick = false;
       incrementGuessCount();
@@ -97,8 +99,7 @@ function cardClickHandler() {
     secondGuess = gameObject[event.currentTarget.id];
     //check if valid click
     if (secondGuess.status === 'unflipped' && firstGuess !== secondGuess) {
-      event.currentTarget.children[0].classList.remove('unflipped');
-      event.currentTarget.children[0].classList.add('flipped');
+      toggleFlippedClasses(event.currentTarget.children[0]);
       secondGuess.status = 'flipped';
       firstClick = false;
       incrementGuessCount();
@@ -110,17 +111,14 @@ function cardClickHandler() {
       secondGuess = null;
       alert('Invalid guess, try again!');
     }
-    //check if match with id 1
+    //check if match
     if (firstGuess.match_id === secondGuess.id) {
-      //keep classes
-
-      //edit gameObject entries
       gameObject[firstGuess.id].status = 'matched';
       gameObject[secondGuess.id].status = 'matched';
       removeCardListener(firstGuess.id);
       removeCardListener(secondGuess.id);
 
-      //first guess back to true
+      //first click back to true
       firstClick = true;
       firstGuess = null;
       secondGuess = null;
@@ -129,17 +127,11 @@ function cardClickHandler() {
       let firstID = firstGuess.id;
       let secondID = secondGuess.id;
       setTimeout(function() {
-        document.getElementById(firstID).children[0].classList.add('unflipped');
-        document.getElementById(firstID).children[0].classList.add('unflipped');
+        toggleFlippedClasses(document.getElementById(firstID).children[0]);
+        toggleFlippedClasses(document.getElementById(secondID).children[0]);
         document.getElementById(secondID).children[0].classList.add('matched');
         document.getElementById(secondID).children[0].classList.add('matched');
-        document
-          .getElementById(firstID)
-          .children[0].classList.remove('flipped');
-        document
-          .getElementById(secondID)
-          .children[0].classList.remove('flipped');
-      }, 1000);
+      }, 800);
 
       gameObject[firstGuess.id].status = 'unflipped';
       gameObject[secondGuess.id].status = 'unflipped';
@@ -211,10 +203,47 @@ function constructGameObject() {
   console.log(gameObject);
 }
 
+function buildCardSpace(number) {
+  let cardDiv = document.createElement('div');
+  cardDiv.classList.add('card-div');
+  cardDiv.classList.add('unflipped');
+
+  //add card front div
+  let cardFrontDiv = document.createElement('div');
+  cardFrontDiv.classList.add('card-face');
+  cardFrontDiv.classList.add('card-front');
+  let cardFrontImage = document.createElement('img');
+  cardFrontImage.setAttribute('src', gameObject[number].card_front);
+  cardFrontDiv.appendChild(cardFrontImage);
+
+  //add card back div on top of card front div
+  let cardBackDiv = document.createElement('div');
+  cardBackDiv.classList.add('card-face');
+  cardBackDiv.classList.add('card-back');
+  let cardBackImage = document.createElement('img');
+  cardBackImage.setAttribute('src', cardBackImagePath);
+  cardBackDiv.appendChild(cardBackImage);
+
+  cardDiv.appendChild(cardBackDiv);
+  cardDiv.appendChild(cardFrontDiv);
+
+  return cardDiv;
+}
+
+function buildCounterSpace() {
+  let counterDiv = document.createElement('div');
+  counterDiv.classList.add('counter-div');
+
+  let counterHeader = document.createElement('h2');
+  counterHeader.setAttribute('id', 'counter');
+  counterHeader.innerHTML = 0;
+  counterDiv.appendChild(counterHeader);
+
+  return counterDiv;
+}
+
 function setupGameGrid() {
   let container = document.getElementById('content');
-
-  //   const gameObject = constructGameObject();
 
   for (let i = 1; i <= 25; i++) {
     let newSpace = document.createElement('div');
@@ -222,39 +251,12 @@ function setupGameGrid() {
     newSpace.setAttribute('id', i);
 
     if (gameObject[i].type === 'card') {
-      let cardDiv = document.createElement('div');
-      cardDiv.classList.add('card-div');
-      cardDiv.classList.add('unflipped');
+      let cardDiv = buildCardSpace(i);
 
-      //add card front div
-      let cardFrontDiv = document.createElement('div');
-      cardFrontDiv.classList.add('card-face');
-      cardFrontDiv.classList.add('card-front');
-      let cardFrontImage = document.createElement('img');
-      cardFrontImage.setAttribute('src', gameObject[i].card_front);
-      cardFrontDiv.appendChild(cardFrontImage);
-
-      //add card back div on top of card front div
-      let cardBackDiv = document.createElement('div');
-      cardBackDiv.classList.add('card-face');
-      cardBackDiv.classList.add('card-back');
-      let cardBackImage = document.createElement('img');
-      cardBackImage.setAttribute('src', cardBackImagePath);
-      cardBackDiv.appendChild(cardBackImage);
-
-      cardDiv.appendChild(cardBackDiv);
-      cardDiv.appendChild(cardFrontDiv);
       newSpace.appendChild(cardDiv);
-
       newSpace.addEventListener('click', cardClickHandler);
     } else {
-      let counterDiv = document.createElement('div');
-      counterDiv.classList.add('counter-div');
-
-      let counterHeader = document.createElement('h2');
-      counterHeader.setAttribute('id', 'counter');
-      counterHeader.innerHTML = 0;
-      counterDiv.appendChild(counterHeader);
+      let counterDiv = buildCounterSpace();
 
       newSpace.appendChild(counterDiv);
     }
